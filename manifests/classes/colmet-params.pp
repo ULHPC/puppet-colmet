@@ -62,16 +62,16 @@ class colmet::params {
     }
 
     # Log directory
-    $logdir = $::operatingsystem ? {
-        default => '/var/log/colmet'
+    $logfile = $::operatingsystem ? {
+        default => '/var/log/colmet.log'
     }
-    $logdir_mode = $::operatingsystem ? {
-        default => '0755',
+    $logfile_mode = $::operatingsystem ? {
+        default => '0644',
     }
-    $logdir_owner = $::operatingsystem ? {
+    $logfile_owner = $::operatingsystem ? {
         default => 'colmet',
     }
-    $logdir_group = $::operatingsystem ? {
+    $logfile_group = $::operatingsystem ? {
         default => 'adm',
     }
 

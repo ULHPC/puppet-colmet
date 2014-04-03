@@ -111,21 +111,22 @@ class colmet::aggregator::common {
         content => template('colmet/rc.colmet.erb'),
     }
 
+    # Create logfile
+    file { $colmet::params::logfile:
+        ensure  => $colmet::aggregator::ensure,
+        require => [
+                    User[$colmet::params::service_user],
+                    Group[$colmet::params::service_group]
+                  ],
+        owner   => $colmet::params::logfile_owner,
+        group   => $colmet::params::logfile_group,
+        mode    => $colmet::params::logfile_mode,
+    }
+
     if $colmet::aggregator::ensure == 'present' {
 
         # Here $colmet::aggregator::ensure is 'present'
 
-        # Create logdir
-        file { $colmet::params::logdir:
-            ensure  => directory,
-            require => [
-                        User[$colmet::params::service_user],
-                        Group[$colmet::params::service_group]
-                      ],
-            owner   => $colmet::params::logdir_owner,
-            group   => $colmet::params::logdir_group,
-            mode    => $colmet::params::logdir_mode,
-        }
         # Create datadir
         file { $colmet::params::data_dir:
             ensure  => directory,
@@ -158,8 +159,7 @@ class colmet::aggregator::common {
             require    => [
                             File[$colmet::params::configfile_init],
                             File[$colmet::params::servicescript_path],
-                            File[$colmet::params::logdir],
-                            File[$colmet::params::logdir]
+                            File[$colmet::params::logfile]
                           ],
             subscribe  => File[$colmet::params::configfile_init]
         }

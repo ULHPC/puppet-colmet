@@ -15,7 +15,7 @@ COMPRESSION_OPTIONS='--hdf5-output-complevel=9 --hdf5-output-complib=zlib'
 SAMPLING_PERIOD='-s <%= scope.lookupvar('colmet::aggregator::sampling_period') %>'
 
 # System settings
-LOGFILE="<%= scope.lookupvar('colmet::params::logdir') %>/colmet.log"
+LOGFILE="<%= scope.lookupvar('colmet::params::logfile') %>"
 USER="<%= scope.lookupvar('colmet::params::service_user') %>"
 GROUP="<%= scope.lookupvar('colmet::params::service_group') %>"
 
