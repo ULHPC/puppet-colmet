@@ -57,7 +57,8 @@ class colmet::params {
     $extra_packages = $::operatingsystem ? {
         default => [
                      'python', 'python-dev', 'python-setuptools', 'python-zmq',
-                     'python-tables', 'python-h5py', 'python-pyinotify'
+                     'python-tables', 'python-h5py', 'python-pyinotify',
+                     'h5utils'
                    ]
     }
 
