@@ -36,12 +36,12 @@ class colmet::params {
     }
 
     $sampling_period = $colmet_sampling_period ? {
-        ''      => '10',
+        ''      => '1',
         default => "${colmet_sampling_period}"
     }
 
     $data_dir = $colmet_data_dir ? {
-        ''      => '/home/colmet',
+        ''      => '/var/lib/colmet',
         default => "${colmet_data_dir}"
     }
 
@@ -70,7 +70,7 @@ class colmet::params {
         default => '0644',
     }
     $logfile_owner = $::operatingsystem ? {
-        default => 'colmet',
+        default => 'root',
     }
     $logfile_group = $::operatingsystem ? {
         default => 'adm',
@@ -82,10 +82,10 @@ class colmet::params {
         default                 => 'colmet'
     }
     $service_user = $::operatingsystem ? {
-        default => 'colmet',
+        default => 'root',
     }
     $service_group = $::operatingsystem ? {
-        default => 'colmet',
+        default => 'root',
     }
     $servicescript_mode = $::operatingsystem ? {
         default => '755',

@@ -72,23 +72,10 @@ class colmet::aggregator::common {
     # Load the variables used in this module. Check the colmet::aggregator-params.pp file
     require colmet::params
 
-    user { $colmet::params::service_user:
-        ensure     => $colmet::aggregator::ensure,
-        uid        => '10000',
-        shell      => '/bin/bash',
-        home       => $colmet::agregator::data_dir,
-    }
-    group { $colmet::params::service_group:
-        ensure  => $colmet::aggregator::ensure,
-        gid     => '10000',
-        require => User[$colmet::params::service_user],
-    }
-
     git::clone { 'git-colmet':
         ensure    => $colmet::aggregator::ensure,
         path      => '/tmp/colmet',
         source    => 'git://scm.gforge.inria.fr/colmet/colmet.git',
-        user      => $colmet::params::service_user,
     }
 
     package { $colmet::params::extra_packages:
@@ -102,6 +89,7 @@ class colmet::aggregator::common {
         ensure  => $colmet::aggregator::ensure,
         content => template('colmet/default.erb'),
         notify  => Service[$colmet::params::servicename],
+        require => File[$colmet::aggregator::data_dir]
     }
     file { $colmet::params::servicescript_path :
         ensure  => $colmet::aggregator::ensure,
@@ -109,15 +97,12 @@ class colmet::aggregator::common {
         group   => $colmet::params::configfile_group,
         mode    => $colmet::params::servicescript_mode,
         content => template('colmet/rc.colmet.erb'),
+        notify  => Service[$colmet::params::servicename]
     }
 
     # Create logfile
     file { $colmet::params::logfile:
         ensure  => $colmet::aggregator::ensure,
-        require => [
-                    User[$colmet::params::service_user],
-                    Group[$colmet::params::service_group]
-                  ],
         owner   => $colmet::params::logfile_owner,
         group   => $colmet::params::logfile_group,
         mode    => $colmet::params::logfile_mode,
@@ -130,10 +115,6 @@ class colmet::aggregator::common {
         # Create datadir
         file { $colmet::params::data_dir:
             ensure  => directory,
-            require => [
-                        User[$colmet::params::service_user],
-                        Group[$colmet::params::service_group]
-                      ],
             owner   => $colmet::params::service_user,
             group   => $colmet::params::service_group,
             mode    => $colmet::params::data_dir_mode,
@@ -142,9 +123,7 @@ class colmet::aggregator::common {
         # Install and start the colmet service
         exec { 'python setup.py install':
             alias       => 'install-colmet',
-            require     => [ User[$colmet::params::service_user],
-                             Group[$colmet::params::service_group],
-                             Git::Clone['git-colmet'],
+            require     => [ Git::Clone['git-colmet'],
                              Package[$colmet::params::extra_packages]
                            ],
             cwd         => '/tmp/colmet',
