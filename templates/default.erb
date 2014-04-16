@@ -1,4 +1,4 @@
 DAEMON_START="1"
-DAEMON_OPTS="-vv -s <%= scope.lookupvar('colmet::aggregator::sampling_period') %> -i zeromq --zeromq-uri tcp://<%= scope.lookupvar('colmet::aggregator::ip_aggregator') %>:5556 -o hdf5 --hdf5-output-filepath=<%= scope.lookupvar('colmet::params::data_dir') %>/colmet_log_`date +%s`.h5 --hdf5-output-complevel=9 --hdf5-output-complib=zlib"
+DAEMON_OPTS="-vv -s <%= scope.lookupvar('colmet::aggregator::sampling_period') %> -i zeromq --zeromq-uri tcp://<%= scope.lookupvar('colmet::aggregator::ip_aggregator') %>:5556 -o hdf5 --hdf5-output-filepath=<%= scope.lookupvar('colmet::params::data_dir') %>/colmet_log.h5 --hdf5-output-complevel=9 --hdf5-output-complib=zlib"
 LOGFILE="<%= scope.lookupvar('colmet::params::logfile') %>"
 
