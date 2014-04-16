@@ -108,6 +108,16 @@ class colmet::aggregator::common {
         mode    => $colmet::params::logfile_mode,
     }
 
+    # restart colmet every hours (memory leak...)
+    cron { 'restart_colmet':
+        ensure  => $colmet::aggregator::ensure,
+        command     => "/etc/init.d/colmet restart",
+        environment => "MAILTO=\"\"",
+        user        => 'root',
+        hour        => '*/1',
+        minute      => '0',
+    }
+
     if $colmet::aggregator::ensure == 'present' {
 
         # Here $colmet::aggregator::ensure is 'present'
