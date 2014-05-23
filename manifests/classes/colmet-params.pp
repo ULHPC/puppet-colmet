@@ -35,19 +35,14 @@ class colmet::params {
         default => "${colmet_ensure}"
     }
 
-    $sampling_period = $colmet_sampling_period ? {
-        ''      => '1',
-        default => "${colmet_sampling_period}"
-    }
-
     $data_dir = $colmet_data_dir ? {
         ''      => '/var/lib/colmet',
         default => "${colmet_data_dir}"
     }
 
-    $ip_aggregator = $colmet_ip_aggregator ? {
+    $ip_collector = $colmet_ip_collector ? {
         ''      => '0.0.0.0',
-        default => "${colmet_ip_aggregator}"
+        default => "${colmet_ip_collector}"
     }
 
     #### MODULE INTERNAL VARIABLES  #########

@@ -1,20 +1,20 @@
-# File::      <tt>colmet::aggregator.pp</tt>
+# File::      <tt>colmet-collector.pp</tt>
 # Author::    Hyacinthe Cartiaux (hyacinthe.cartiaux@uni.lu)
 # Copyright:: Copyright (c) 2014 Hyacinthe Cartiaux
 # License::   GPLv3
 #
 # ------------------------------------------------------------------------------
-# = Class: colmet::aggregator
+# = Class: colmet::collector
 #
-# Configure and manage colmet::aggregator
+# Configure and manage colmet::collector
 #
 # == Parameters:
 #
-# $ensure:: *Default*: 'present'. Ensure the presence (or absence) of colmet::aggregator
+# $ensure:: *Default*: 'present'. Ensure the presence (or absence) of colmet::collector
 #
 # == Actions:
 #
-# Install and configure colmet::aggregator
+# Install and configure colmet::collector
 #
 # == Requires:
 #
@@ -22,12 +22,12 @@
 #
 # == Sample Usage:
 #
-#     import colmet::aggregator
+#     import colmet::collector
 #
 # You can then specialize the various aspects of the configuration,
 # for instance:
 #
-#         class { 'colmet::aggregator':
+#         class { 'colmet::collector':
 #             ensure => 'present'
 #         }
 #
@@ -39,22 +39,21 @@
 #
 # [Remember: No empty lines between comments and class definition]
 #
-class colmet::aggregator(
-    $ensure          = $colmet::params::ensure,
-    $sampling_period = $colmet::params::sampling_period,
-    $data_dir        = $colmet::params::data_dir,
-    $ip_aggregator   = $colmet::params::ip_aggregator
+class colmet::collector(
+    $ensure       = $colmet::params::ensure,
+    $data_dir     = $colmet::params::data_dir,
+    $ip_collector = $colmet::params::ip_collector
 )
 inherits colmet::params
 {
-    info ("Configuring colmet::aggregator (with ensure = ${ensure})")
+    info ("Configuring colmet::collector (with ensure = ${ensure})")
 
     if ! ($ensure in [ 'present', 'absent' ]) {
-        fail("colmet::aggregator 'ensure' parameter must be set to either 'absent' or 'present'")
+        fail("colmet::collector 'ensure' parameter must be set to either 'absent' or 'present'")
     }
 
     case $::operatingsystem {
-        debian, ubuntu:         { include colmet::aggregator::debian }
+        debian, ubuntu:         { include colmet::collector::debian }
         default: {
             fail("Module $module_name is not supported on $operatingsystem")
         }
@@ -62,37 +61,37 @@ inherits colmet::params
 }
 
 # ------------------------------------------------------------------------------
-# = Class: colmet::aggregator::common
+# = Class: colmet::collector::common
 #
-# Base class to be inherited by the other colmet::aggregator classes
+# Base class to be inherited by the other colmet::collector classes
 #
 # Note: respect the Naming standard provided here[http://projects.puppetlabs.com/projects/puppet/wiki/Module_Standards]
-class colmet::aggregator::common {
+class colmet::collector::common {
 
-    # Load the variables used in this module. Check the colmet::aggregator-params.pp file
+    # Load the variables used in this module. Check the colmet::collector-params.pp file
     require colmet::params
 
     git::clone { 'git-colmet':
-        ensure    => $colmet::aggregator::ensure,
+        ensure    => $colmet::collector::ensure,
         path      => '/tmp/colmet',
         source    => 'git://scm.gforge.inria.fr/colmet/colmet.git',
     }
 
     package { $colmet::params::extra_packages:
-        ensure     => $colmet::aggregator::ensure,
+        ensure     => $colmet::collector::ensure,
     }
 
     file { $colmet::params::configfile_init:
         owner   => $colmet::params::configfile_owner,
         group   => $colmet::params::configfile_group,
         mode    => $colmet::params::configfile_mode,
-        ensure  => $colmet::aggregator::ensure,
+        ensure  => $colmet::collector::ensure,
         content => template('colmet/default.erb'),
         notify  => Service[$colmet::params::servicename],
-        require => File[$colmet::aggregator::data_dir]
+        require => File[$colmet::collector::data_dir]
     }
     file { $colmet::params::servicescript_path :
-        ensure  => $colmet::aggregator::ensure,
+        ensure  => $colmet::collector::ensure,
         owner   => $colmet::params::configfile_owner,
         group   => $colmet::params::configfile_group,
         mode    => $colmet::params::servicescript_mode,
@@ -102,7 +101,7 @@ class colmet::aggregator::common {
 
     # Create logfile
     file { $colmet::params::logfile:
-        ensure  => $colmet::aggregator::ensure,
+        ensure  => $colmet::collector::ensure,
         owner   => $colmet::params::logfile_owner,
         group   => $colmet::params::logfile_group,
         mode    => $colmet::params::logfile_mode,
@@ -110,7 +109,7 @@ class colmet::aggregator::common {
 
     # restart colmet every hours (memory leak...)
     cron { 'restart_colmet':
-        ensure  => $colmet::aggregator::ensure,
+        ensure      => $colmet::collector::ensure,
         command     => "/etc/init.d/colmet restart",
         environment => "MAILTO=\"\"",
         user        => 'root',
@@ -118,9 +117,9 @@ class colmet::aggregator::common {
         minute      => '0',
     }
 
-    if $colmet::aggregator::ensure == 'present' {
+    if $colmet::collector::ensure == 'present' {
 
-        # Here $colmet::aggregator::ensure is 'present'
+        # Here $colmet::collector::ensure is 'present'
 
         # Create datadir
         file { $colmet::params::data_dir:
@@ -155,7 +154,7 @@ class colmet::aggregator::common {
     }
     else
     {
-        # Here $colmet::aggregator::ensure is 'absent'
+        # Here $colmet::collector::ensure is 'absent'
 
     }
 
@@ -163,8 +162,8 @@ class colmet::aggregator::common {
 
 
 # ------------------------------------------------------------------------------
-# = Class: colmet::aggregator::debian
+# = Class: colmet::collector::debian
 #
 # Specialization class for Debian systems
-class colmet::aggregator::debian inherits colmet::aggregator::common { }
+class colmet::collector::debian inherits colmet::collector::common { }
 
