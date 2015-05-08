@@ -38,6 +38,7 @@
     "grid"
   ],
   "classes": [
+    "colmet",
     "colmet::collector",
     "colmet::collector::common",
     "colmet::collector::debian",
