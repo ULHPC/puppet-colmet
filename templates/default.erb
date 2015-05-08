@@ -1,0 +1,4 @@
+DAEMON_START="1"
+DAEMON_OPTS="-vv --zeromq-bind-uri tcp://<%= scope.lookupvar('colmet::collector::ip_collector') %>:5556 --hdf5-filepath=<%= scope.lookupvar('colmet::params::data_dir') %>/colmet_log.h5 --hdf5-complevel=9"
+LOGFILE="<%= scope.lookupvar('colmet::params::logfile') %>"
+
