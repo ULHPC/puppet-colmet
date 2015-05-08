@@ -22,7 +22,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     }.each do |name,cfg|
         boxname = name.to_s.downcase.gsub(/_/, '-')
         config.vm.define boxname do |local|
-            local.vm.primary = true if cfg[:primary]
             local.vm.box = cfg[:box]
             local.vm.host_name = ENV['VAGRANT_HOSTNAME'] || name.to_s.downcase.gsub(/_/, '-').concat(".vagrant.com")
             local.vm.provision "shell", path: ".vagrant_init.rb"

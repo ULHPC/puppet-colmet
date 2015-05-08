@@ -71,10 +71,11 @@ class colmet::collector::common {
     # Load the variables used in this module. Check the colmet::collector-params.pp file
     require colmet::params
 
-    git::clone { 'git-colmet':
-        ensure => $colmet::collector::ensure,
-        path   => '/tmp/colmet',
-        source => 'git://scm.gforge.inria.fr/colmet/colmet.git',
+   vcsrepo { 'git-colmet':
+        ensure   => $colmet::collector::ensure,
+        provider => git,
+        path     => '/tmp/colmet',
+        source   => 'git://scm.gforge.inria.fr/colmet/colmet.git',
     }
 
     package { $colmet::params::extra_packages:
@@ -132,7 +133,7 @@ class colmet::collector::common {
         # Install and start the colmet service
         exec { 'python setup.py install':
             alias     => 'install-colmet',
-            require   =>  [ Git::Clone['git-colmet'],
+            require   =>  [ Vcsrepo['git-colmet'],
                             Package[$colmet::params::extra_packages]
                           ],
             cwd       => '/tmp/colmet',
