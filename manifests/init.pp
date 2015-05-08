@@ -5,7 +5,5 @@
 #
 # ------------------------------------------------------------------------------
 
-import 'classes/*.pp'
-#import "definitions/*.pp"
-
+class colmet inherits colmet::params {}
 
