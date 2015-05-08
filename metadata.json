@@ -1,11 +1,11 @@
 {
   "name": "ULHPC/colmet",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "ULHPC Management Team",
   "mail": "hpc-sysadmins@uni.lu",
   "summary": "Configure and manage colmet",
   "description": "Configure and manage colmet",
-  "license": "gpl-3.0",
+  "license": "GPL-3.0",
   "source": "https://github.com/ULHPC/puppet-colmet",
   "project_page": "https://github.com/ULHPC/puppet-colmet",
   "issues_url": "https://github.com/ULHPC/puppet-colmet/issues",
@@ -13,11 +13,11 @@
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
-      "version_range": ">= 1.0.0"
+      "version_range": ">=4.2.2 <5.0.0"
     },
     {
-      "name": "/ULHPC",
-      "version_requirement": ""
+      "name": "puppetlabs-vcsrepo",
+      "version_range": ">=1.2.0 <2.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -38,6 +38,7 @@
     "grid"
   ],
   "classes": [
+    "colmet",
     "colmet::collector",
     "colmet::collector::common",
     "colmet::collector::debian",

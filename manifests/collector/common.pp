@@ -4,63 +4,6 @@
 # License::   GPLv3
 #
 # ------------------------------------------------------------------------------
-# = Class: colmet::collector
-#
-# Configure and manage colmet::collector
-#
-# == Parameters:
-#
-# $ensure:: *Default*: 'present'. Ensure the presence (or absence) of colmet::collector
-#
-# == Actions:
-#
-# Install and configure colmet::collector
-#
-# == Requires:
-#
-# n/a
-#
-# == Sample Usage:
-#
-#     import colmet::collector
-#
-# You can then specialize the various aspects of the configuration,
-# for instance:
-#
-#         class { 'colmet::collector':
-#             ensure => 'present'
-#         }
-#
-# == Warnings
-#
-# /!\ Always respect the style guide available
-# here[http://docs.puppetlabs.com/guides/style_guide]
-#
-#
-# [Remember: No empty lines between comments and class definition]
-#
-class colmet::collector(
-    $ensure       = $colmet::params::ensure,
-    $data_dir     = $colmet::params::data_dir,
-    $ip_collector = $colmet::params::ip_collector
-)
-inherits colmet::params
-{
-    info ("Configuring colmet::collector (with ensure = ${ensure})")
-
-    if ! ($ensure in [ 'present', 'absent' ]) {
-        fail("colmet::collector 'ensure' parameter must be set to either 'absent' or 'present'")
-    }
-
-    case $::operatingsystem {
-        debian, ubuntu:         { include colmet::collector::debian }
-        default: {
-            fail("Module ${module_name} is not supported on ${::operatingsystem}")
-        }
-    }
-}
-
-# ------------------------------------------------------------------------------
 # = Class: colmet::collector::common
 #
 # Base class to be inherited by the other colmet::collector classes
@@ -71,10 +14,11 @@ class colmet::collector::common {
     # Load the variables used in this module. Check the colmet::collector-params.pp file
     require colmet::params
 
-    git::clone { 'git-colmet':
-        ensure => $colmet::collector::ensure,
-        path   => '/tmp/colmet',
-        source => 'git://scm.gforge.inria.fr/colmet/colmet.git',
+    vcsrepo { 'git-colmet':
+        ensure   => $colmet::collector::ensure,
+        provider => git,
+        path     => '/tmp/colmet',
+        source   => 'git://scm.gforge.inria.fr/colmet/colmet.git',
     }
 
     package { $colmet::params::extra_packages:
@@ -132,7 +76,7 @@ class colmet::collector::common {
         # Install and start the colmet service
         exec { 'python setup.py install':
             alias     => 'install-colmet',
-            require   =>  [ Git::Clone['git-colmet'],
+            require   =>  [ Vcsrepo['git-colmet'],
                             Package[$colmet::params::extra_packages]
                           ],
             cwd       => '/tmp/colmet',
@@ -160,10 +104,4 @@ class colmet::collector::common {
 
 }
 
-
-# ------------------------------------------------------------------------------
-# = Class: colmet::collector::debian
-#
-# Specialization class for Debian systems
-class colmet::collector::debian inherits colmet::collector::common { }
 

@@ -1,6 +1,6 @@
 -*- mode: markdown; mode: auto-fill; fill-column: 80 -*-
 
-# Ulhpc/colmet Puppet Module Developments
+# Colmet Puppet Module Developments
 
 If you want to contribute to the code, you shall be aware of the way this module
 is organized.   
@@ -13,9 +13,9 @@ is organized.
            `-- files/            # Contains static files, which managed nodes can download
            `-- lib/              # custom facts/type/provider definitions
            `-- manifests/
-                `-- init.pp      # Main manifests file which defines the ULHPC/colmet class 
+                `-- init.pp      # Main manifests file which defines the colmet class 
                 `-- params.pp    # ULHPC/colmet module variables 
-                `-- mydef.pp     # defines the ULHPC/colmet::mydef  definition   
+                `-- mydef.pp     # defines the colmet::mydef  definition   
            `-- templates/        # Module ERB template files
            `-- tests/            # Contains examples showing how to declare the module’s classes and defined type
            `-- spec/             # Contains rspec tests 
@@ -129,7 +129,7 @@ merge all things the way they should be.
 
 # Contributing Notes
 
-This project is released under the terms of the [gpl-3.0 Licence](LICENSE). 
+This project is released under the terms of the [GPL-3.0 Licence](LICENSE). 
 So you are more than welcome to contribute to its development as follows: 
 
 1. Fork it
