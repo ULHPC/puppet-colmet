@@ -30,6 +30,7 @@ assumes that you have [RVM](https://rvm.io/) installed on your system.
 See [`metadata.json`](metadata.json). In particular, this module depends on 
 
 * [puppetlabs/stdlib](https://forge.puppetlabs.com/puppetlabs/stdlib)
+* [puppetlabs/vcsrepo](https://forge.puppetlabs.com/puppetlabs/vcsrepo)
 
 ## General Parameters
 
