@@ -30,19 +30,19 @@ class colmet::params {
     ###########################################
 
     # ensure the presence (or absence) of colmet
-    $ensure = $colmet_ensure ? {
+    $ensure = $::colmet_ensure ? {
         ''      => 'present',
-        default => "${colmet_ensure}"
+        default => $::colmet_ensure
     }
 
-    $data_dir = $colmet_data_dir ? {
+    $data_dir = $::colmet_data_dir ? {
         ''      => '/var/lib/colmet',
-        default => "${colmet_data_dir}"
+        default => $::colmet_data_dir
     }
 
-    $ip_collector = $colmet_ip_collector ? {
+    $ip_collector = $::colmet_ip_collector ? {
         ''      => '0.0.0.0',
-        default => "${colmet_ip_collector}"
+        default => $::colmet_ip_collector
     }
 
     #### MODULE INTERNAL VARIABLES  #########
@@ -50,11 +50,11 @@ class colmet::params {
     #######################################
     # colmet packages
     $extra_packages = $::operatingsystem ? {
-        default => [
-                     'python', 'python-dev', 'python-setuptools', 'python-zmq',
-                     'python-tables', 'python-h5py', 'python-pyinotify',
-                     'h5utils'
-                   ]
+        default =>  [
+                      'python', 'python-dev', 'python-setuptools', 'python-zmq',
+                      'python-tables', 'python-h5py', 'python-pyinotify',
+                      'h5utils'
+                    ]
     }
 
     # Log directory

@@ -15,12 +15,12 @@
 
 include 'ULHPC/colmet::params'
 
-$names = ["ensure", "protocol", "port", "packagename"]
+$names = ['ensure', 'protocol', 'port', 'packagename']
 
-notice("ULHPC/colmet::params::ensure = ${ULHPC/colmet::params::ensure}")
-notice("ULHPC/colmet::params::protocol = ${ULHPC/colmet::params::protocol}")
-notice("ULHPC/colmet::params::port = ${ULHPC/colmet::params::port}")
-notice("ULHPC/colmet::params::packagename = ${ULHPC/colmet::params::packagename}")
+notice("ULHPC/colmet::params::ensure = ${ULHPC}/colmet::params::ensure")
+notice("ULHPC/colmet::params::protocol = ${ULHPC}/colmet::params::protocol")
+notice("ULHPC/colmet::params::port = ${ULHPC}/colmet::params::port")
+notice("ULHPC/colmet::params::packagename = ${ULHPC}/colmet::params::packagename")
 
 #each($names) |$v| {
 #    $var = "ULHPC/colmet::params::${v}"

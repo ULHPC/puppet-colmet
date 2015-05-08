@@ -55,7 +55,7 @@ inherits colmet::params
     case $::operatingsystem {
         debian, ubuntu:         { include colmet::collector::debian }
         default: {
-            fail("Module $module_name is not supported on $operatingsystem")
+            fail("Module ${module_name} is not supported on ${::operatingsystem}")
         }
     }
 }
@@ -72,9 +72,9 @@ class colmet::collector::common {
     require colmet::params
 
     git::clone { 'git-colmet':
-        ensure    => $colmet::collector::ensure,
-        path      => '/tmp/colmet',
-        source    => 'git://scm.gforge.inria.fr/colmet/colmet.git',
+        ensure => $colmet::collector::ensure,
+        path   => '/tmp/colmet',
+        source => 'git://scm.gforge.inria.fr/colmet/colmet.git',
     }
 
     package { $colmet::params::extra_packages:
@@ -82,10 +82,10 @@ class colmet::collector::common {
     }
 
     file { $colmet::params::configfile_init:
+        ensure  => $colmet::collector::ensure,
         owner   => $colmet::params::configfile_owner,
         group   => $colmet::params::configfile_group,
         mode    => $colmet::params::configfile_mode,
-        ensure  => $colmet::collector::ensure,
         content => template('colmet/default.erb'),
         notify  => Service[$colmet::params::servicename],
         require => File[$colmet::collector::data_dir]
@@ -101,16 +101,16 @@ class colmet::collector::common {
 
     # Create logfile
     file { $colmet::params::logfile:
-        ensure  => $colmet::collector::ensure,
-        owner   => $colmet::params::logfile_owner,
-        group   => $colmet::params::logfile_group,
-        mode    => $colmet::params::logfile_mode,
+        ensure => $colmet::collector::ensure,
+        owner  => $colmet::params::logfile_owner,
+        group  => $colmet::params::logfile_group,
+        mode   => $colmet::params::logfile_mode,
     }
 
     # restart colmet every hours (memory leak...)
     cron { 'restart_colmet':
         ensure      => $colmet::collector::ensure,
-        command     => "/etc/init.d/colmet restart",
+        command     => '/etc/init.d/colmet restart',
         environment => "MAILTO=\"\"",
         user        => 'root',
         hour        => '*/1',
@@ -123,33 +123,33 @@ class colmet::collector::common {
 
         # Create datadir
         file { $colmet::params::data_dir:
-            ensure  => directory,
-            owner   => $colmet::params::service_user,
-            group   => $colmet::params::service_group,
-            mode    => $colmet::params::data_dir_mode,
+            ensure => directory,
+            owner  => $colmet::params::service_user,
+            group  => $colmet::params::service_group,
+            mode   => $colmet::params::data_dir_mode,
         }
 
         # Install and start the colmet service
         exec { 'python setup.py install':
-            alias       => 'install-colmet',
-            require     => [ Git::Clone['git-colmet'],
-                             Package[$colmet::params::extra_packages]
-                           ],
-            cwd         => '/tmp/colmet',
-            path        => '/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin',
-            logoutput   => on_failure,
-            user        => 'root',
+            alias     => 'install-colmet',
+            require   =>  [ Git::Clone['git-colmet'],
+                            Package[$colmet::params::extra_packages]
+                          ],
+            cwd       => '/tmp/colmet',
+            path      => '/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin',
+            logoutput => on_failure,
+            user      => 'root',
         } ->
         service { $colmet::params::servicename:
-            name       => $colmet::params::servicename,
-            enable     => true,
-            ensure     => running,
-            require    => [
+            ensure    => running,
+            name      => $colmet::params::servicename,
+            enable    => true,
+            require   => [
                             File[$colmet::params::configfile_init],
                             File[$colmet::params::servicescript_path],
                             File[$colmet::params::logfile]
                           ],
-            subscribe  => File[$colmet::params::configfile_init]
+            subscribe => File[$colmet::params::configfile_init]
         }
     }
     else
