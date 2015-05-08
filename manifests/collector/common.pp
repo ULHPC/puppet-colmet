@@ -14,7 +14,7 @@ class colmet::collector::common {
     # Load the variables used in this module. Check the colmet::collector-params.pp file
     require colmet::params
 
-   vcsrepo { 'git-colmet':
+    vcsrepo { 'git-colmet':
         ensure   => $colmet::collector::ensure,
         provider => git,
         path     => '/tmp/colmet',

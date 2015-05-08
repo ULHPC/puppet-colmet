@@ -15,7 +15,11 @@
 
 include 'colmet::params'
 
-$names = ["ensure", "data_dir", "ip_collector", "extra_packages", "logfile", "logfile_mode", "logfile_owner", "logfile_group", "servicename", "service_user", "service_group", "servicescript_mode", "servicescript_path", "configfile_init", "configfile_mode", "configfile_owner", "configfile_group", "data_dir_mode"]
+$names = ['ensure', 'data_dir', 'ip_collector', 'extra_packages', 'logfile',
+          'logfile_mode', 'logfile_owner', 'logfile_group', 'servicename',
+          'service_user', 'service_group', 'servicescript_mode',
+          'servicescript_path', 'configfile_init', 'configfile_mode',
+          'configfile_owner', 'configfile_group', 'data_dir_mode']
 
 notice("colmet::params::ensure = ${colmet::params::ensure}")
 notice("colmet::params::data_dir = ${colmet::params::data_dir}")
