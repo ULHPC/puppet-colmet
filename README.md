@@ -1,9 +1,9 @@
 -*- mode: markdown; mode: auto-fill; fill-column: 80 -*-
 
-# Ulhpc/colmet Puppet Module 
+# Colmet Puppet Module 
 
 [![Puppet Forge](http://img.shields.io/puppetforge/v/ULHPC/colmet.svg)](https://forge.puppetlabs.com/ULHPC/colmet)
-[![License](http://img.shields.io/:license-gpl3.0-blue.svg)](LICENSE)
+[![License](http://img.shields.io/:license-GPL3.0-blue.svg)](LICENSE)
 ![Supported Platforms](http://img.shields.io/badge/platform-debian-lightgrey.svg)
 
 Configure and manage colmet
@@ -18,9 +18,9 @@ Configure and manage colmet
 Configure and manage colmet
 This module implements the following elements: 
 
-* __classes__:     `ULHPC/colmet`
+* __classes__:     `colmet`
 * __definitions__: 
-  * `ULHPC/colmet::mydef`: 
+  * `colmet::mydef`: 
  
 The various operations of this repository are piloted from a `Rakefile` which
 assumes that you have [RVM](https://rvm.io/) installed on your system.
@@ -37,13 +37,13 @@ See [manifests/params.pp](manifests/params.pp)
 
 ## Overview and Usage
 
-### class `ULHPC/colmet`
+### class `colmet`
 
-     include ' ULHPC/colmet'
+     include ' colmet'
 
-### definition `ULHPC/colmet::mydef`
+### definition `colmet::mydef`
 
-The definition `ULHPC/colmet::mydef` provides ...
+The definition `colmet::mydef` provides ...
 This definition accepts the following parameters:
 
 * `$ensure`: default to 'present', can be 'absent'
@@ -52,7 +52,7 @@ This definition accepts the following parameters:
 
 Example:
 
-      ULHPC/colmet::mydef {'entry':
+      colmet::mydef {'entry':
            content => "entry\n",
       }
 
