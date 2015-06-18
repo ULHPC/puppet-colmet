@@ -3,11 +3,11 @@
 # chkconfig: 2345 90 10
 # description: This script starts or stops the colmet collector
 # processname: colmet-collector
-# pidfile: /var/run/colmet.pid
+# pidfile: /var/run/colmet-collector.pid
 
 
 ### BEGIN INIT INFO
-# Provides:          colmet
+# Provides:          colmet-collector
 # Required-Start:    $network $local_fs
 # Required-Stop:     $network $local_fs
 # Default-Start:     S 2 3 4 5
@@ -18,43 +18,26 @@
 # Description:       This script starts or stops the colmet collector
 ### END INIT INFO
 
-# Author: Philippe Le Brouster <philippe.le-brouster@imag.fr>
-#
-
 LANG=C
 export LANG
 
 PATH=/usr/local/bin:/sbin:/usr/sbin:/bin:/usr/bin:$PATH
 
-DEFAULTCONF=/etc/default/colmet
+DEFAULTCONF=/etc/default/colmet-collector
 
 DAEMON_START="1"
-NAME=colmet
 DESC="Colmet collector"
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/colmet-collector.pid
 LOGFILE=/var/log/colmet/collector.log
 DAEMON=$(which colmet-collector)
-DAEMON_NAME=colmet-collector
 DAEMON_OPTS="-vvv --zeromq-bind-uri tcp://127.0.0.1:5556 --hdf5-filepath /data/colmet.hdf5 --hdf5-complevel 9"
 
 # Read configuration variable file if it is present
 [ -r "$DEFAULTCONF" ] && . "$DEFAULTCONF"
 
-DAEMON_ARGS="--daemon --pidfile $PIDFILE --logfile $LOGFILE"
-
 NOLSB=
 
 [ -f /lib/lsb/init-functions ] || NOLSB=yes
-
-if [ -f /etc/debian_version ]; then
-    system=debian
-elif [ -f /etc/redhat-release ]; then
-    system=redhat
-elif [ -f /etc/SuSE-release ]; then
-    system=suse
-elif [ -f /etc/gentoo-release ]; then
-    system=gentoo
-fi
 
 if [ -z "$NOLSB" ]; then
     . /lib/lsb/init-functions
@@ -80,27 +63,28 @@ fi
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
 
-do_start(){
+do_start()
+{
 	begin_msg "Starting the colmet collector"
+	# Return
+	#   0 if daemon has been started
+	#   1 if daemon was already running
+	#   2 if daemon could not be started
+
 	if [ "$DAEMON_START" != "1" ]; then
 		warn_msg "Autostart disabled."
 		return 0
 	fi
 
-	if pidofproc -p $PIDFILE > /dev/null; then
-		fail_msg "already running"
-		exit 2
-	fi
-
         [ ! -d "$(dirname $LOGFILE)" ] && mkdir -p "$(dirname $LOGFILE)"
 
-	start_daemon -p "$PIDFILE" "$DAEMON" $DAEMON_ARGS $DAEMON_OPTS
+        start-stop-daemon --start --quiet --make-pidfile --pidfile $PIDFILE --background \
+         --startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS > $LOGFILE 2>&1"
+
         if [ "$?" != 0 ]; then
             fail_msg "Unable to start"
         else
             succ_msg
-            # redhat world
-            [ -d /var/lock/subsys/ ] && touch  /var/lock/subsys/$NAME
         fi
 	return 0
 }
@@ -112,19 +96,17 @@ do_stop() {
     #   1 if daemon was already stopped
     #   2 if daemon could not be stopped
     #   other if a failure occurred
-    killproc -p "$PIDFILE"
+
+    start-stop-daemon --stop --quiet --pidfile $PIDFILE 
     RETVAL="$?"
-    if [ "$RETVAL" = 2 ]; then
-        fail_msg "Unable to stop $DESC"
-        exit 2
-    fi
+    [ "$RETVAL" = 2 ] && return 2
+    
     # Many daemons don't delete their pidfiles when they exit.
     rm -f $PIDFILE
-
-    # redhat world
-    [ -d /var/lock/subsys/ ] && rm -f /var/lock/subsys/$NAME
-
+    
     succ_msg
+    return "$RETVAL"
+
     return 0
 }
 
@@ -140,6 +122,9 @@ case "$1" in
             sleep 1
             do_start
         fi
+        ;;
+    status)
+        status_of_proc $DAEMON "$DESC"
         ;;
     *)
         echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
