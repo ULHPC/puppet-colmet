@@ -40,10 +40,11 @@
     "colmet",
     "colmet::collector",
     "colmet::collector::common",
-    "colmet::collector::debian",
+    "colmet::collector::common::debian",
     "colmet::params"
   ],
   "definitions": [
 
-  ]
+  ],
+  "docs_project": "ulhpc-puppet-colmet"
 }
