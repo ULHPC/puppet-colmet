@@ -22,25 +22,28 @@ class colmet::collector::common {
     }
 
     package { $colmet::params::extra_packages:
-        ensure     => $colmet::collector::ensure,
+        ensure => $colmet::collector::ensure,
     }
 
+    $notify = $colmet::collector::ensure ? {
+                  present => Service[$colmet::params::servicename],
+                  absent  => undef
+              }
     file { $colmet::params::configfile_init:
         ensure  => $colmet::collector::ensure,
         owner   => $colmet::params::configfile_owner,
         group   => $colmet::params::configfile_group,
         mode    => $colmet::params::configfile_mode,
         content => template('colmet/default.erb'),
-        notify  => Service[$colmet::params::servicename],
-        require => File[$colmet::collector::data_dir]
+        notify  => $notify
     }
     file { $colmet::params::servicescript_path :
         ensure  => $colmet::collector::ensure,
         owner   => $colmet::params::configfile_owner,
         group   => $colmet::params::configfile_group,
         mode    => $colmet::params::servicescript_mode,
-        content => template('colmet/rc.colmet.erb'),
-        notify  => Service[$colmet::params::servicename]
+        content => template('colmet/rc.colmet-collector.erb'),
+        notify  => $notify
     }
 
     # Create logfile
@@ -71,19 +74,21 @@ class colmet::collector::common {
             owner  => $colmet::params::service_user,
             group  => $colmet::params::service_group,
             mode   => $colmet::params::data_dir_mode,
-        }
-
+        } ->
         # Install and start the colmet service
-        exec { 'python setup.py install':
+        exec { "python setup.py install --record ${colmet::params::data_dir}.installed_files":
             alias     => 'install-colmet',
-            require   =>  [ Vcsrepo['git-colmet'],
-                            Package[$colmet::params::extra_packages]
-                          ],
             cwd       => '/tmp/colmet',
             path      => '/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin',
             logoutput => on_failure,
             user      => 'root',
-        } ->
+            unless    => 'test -e /usr/local/bin/colmet-collector',
+            before    => Service[$colmet::params::servicename],
+            require   =>  [ Vcsrepo['git-colmet'],
+                            Package[$colmet::params::extra_packages]
+                          ],
+        }
+
         service { $colmet::params::servicename:
             ensure    => running,
             name      => $colmet::params::servicename,
@@ -91,15 +96,22 @@ class colmet::collector::common {
             require   => [
                             File[$colmet::params::configfile_init],
                             File[$colmet::params::servicescript_path],
-                            File[$colmet::params::logfile]
+                            File[$colmet::params::logfile],
                           ],
             subscribe => File[$colmet::params::configfile_init]
         }
+
     }
     else
     {
         # Here $colmet::collector::ensure is 'absent'
-
+        exec { "cat ${colmet::params::data_dir}.installed_files | xargs rm -rf":
+            alias     => 'remove-colmet',
+            path      => '/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin',
+            logoutput => on_failure,
+            user      => 'root',
+            onlyif    => 'test -e /usr/local/bin/colmet-collector',
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-# File::      <tt>colmet-collector.pp</tt>
+# File::      <tt>collector.pp</tt>
 # Author::    Hyacinthe Cartiaux (hyacinthe.cartiaux@uni.lu)
 # Copyright:: Copyright (c) 2014 Hyacinthe Cartiaux
 # License::   GPLv3
@@ -53,7 +53,7 @@ inherits colmet::params
     }
 
     case $::operatingsystem {
-        debian, ubuntu:         { include colmet::collector::debian }
+        debian, ubuntu:         { include colmet::collector::common::debian }
         default: {
             fail("Module ${module_name} is not supported on ${::operatingsystem}")
         }

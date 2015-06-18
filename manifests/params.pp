@@ -73,8 +73,8 @@ class colmet::params {
 
     # colmet associated services
     $servicename = $::operatingsystem ? {
-        /(?i-mx:ubuntu|debian)/ => 'colmet',
-        default                 => 'colmet'
+        /(?i-mx:ubuntu|debian)/ => 'colmet-collector',
+        default                 => 'colmet-collector'
     }
     $service_user = $::operatingsystem ? {
         default => 'root',
@@ -86,13 +86,13 @@ class colmet::params {
         default => '755',
     }
     $servicescript_path = $::operatingsystem ? {
-        default => '/etc/init.d/colmet',
+        default => '/etc/init.d/colmet-collector',
     }
 
     # Configuration
     $configfile_init = $::operatingsystem ? {
-        /(?i-mx:ubuntu|debian)/ => '/etc/default/colmet',
-        default                 => '/etc/sysconfig/colmet'
+        /(?i-mx:ubuntu|debian)/ => '/etc/default/colmet-collector',
+        default                 => '/etc/sysconfig/colmet-collector'
     }
     $configfile_mode = $::operatingsystem ? {
         default => '0644',
