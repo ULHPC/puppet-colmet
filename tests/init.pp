@@ -16,5 +16,7 @@
 #      sudo puppet apply -t /vagrant/tests/init.pp
 #
 node default {
-    include colmet::collector
+    class { 'colmet::collector':
+      ensure => 'present'
+    }
 }
