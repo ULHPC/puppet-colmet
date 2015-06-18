@@ -1,6 +1,6 @@
 {
   "name": "ULHPC/colmet",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "ULHPC Management Team",
   "mail": "hpc-sysadmins@uni.lu",
   "summary": "Configure and manage colmet",
@@ -24,7 +24,6 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "6",
         "7"
       ]
     }
@@ -41,10 +40,11 @@
     "colmet",
     "colmet::collector",
     "colmet::collector::common",
-    "colmet::collector::debian",
+    "colmet::collector::common::debian",
     "colmet::params"
   ],
   "definitions": [
 
-  ]
+  ],
+  "docs_project": "ulhpc-puppet-colmet"
 }
