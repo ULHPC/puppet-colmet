@@ -57,7 +57,7 @@ class colmet::collector::common {
     # restart colmet every hours (memory leak...)
     cron { 'restart_colmet':
         ensure      => $colmet::collector::ensure,
-        command     => '/etc/init.d/colmet restart',
+        command     => "/etc/init.d/${colmet::params::servicename} restart",
         environment => "MAILTO=\"\"",
         user        => 'root',
         hour        => '*/1',
